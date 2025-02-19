@@ -6,6 +6,12 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 export default function AdoptPage() {
+  const [isZodiacExpanded, setIsZodiacExpanded] = React.useState(false);
+
+  const allZodiacSigns = [
+    'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
+    'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
+  ];
   return (
     <main className="min-h-screen bg-white">
       <Header />
@@ -89,7 +95,7 @@ export default function AdoptPage() {
         <section>
           <h2 className="text-xl font-semibold text-green-800 mb-4">Adopt according to your Zodiac...</h2>
           <div className="grid grid-cols-4 gap-6">
-            {['Aries', 'Taurus', 'Gemini', 'Cancer'].map((zodiac) => (
+            {(isZodiacExpanded ? allZodiacSigns : allZodiacSigns.slice(0, 4)).map((zodiac) => (
               <div key={zodiac} className="text-center">
                 <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-2"></div>
                 <p className="text-green-800">{zodiac}</p>
@@ -97,7 +103,12 @@ export default function AdoptPage() {
             ))}
           </div>
           <div className="text-center mt-4">
-            <button className="text-gray-500">▼</button>
+            <button 
+              className="text-gray-500 hover:text-gray-700 transition-colors duration-200" 
+              onClick={() => setIsZodiacExpanded(!isZodiacExpanded)}
+            >
+              {isZodiacExpanded ? '▲' : '▼'}
+            </button>
           </div>
         </section>
       </div>
