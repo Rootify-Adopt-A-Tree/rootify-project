@@ -1,20 +1,95 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';  // Correct import for Next.js 13+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
+
+interface Mission {
+  id: string;
+  aim: string;
+  contact: string;
+  darpanId: string;
+  email: string;
+  location: string;
+  ngoName: string;
+  password: string;
+  price: string;
+  projectName: string;
+  state: string;
+  image?: string;
+}
 
 export default function AdoptPage() {
   const router = useRouter();
   const [isZodiacExpanded, setIsZodiacExpanded] = React.useState(false);
+  const [missions, setMissions] = useState<Mission[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const allZodiacSigns = [
     'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
     'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
   ];
 
-  const missions = ['Mission Taljai', 'Mission Anandvan', 'Mission Pune'];
+  useEffect(() => {
+    const fetchMissions = async () => {
+      try {
+        console.log("Fetching missions...");
+        const missionsCollection = collection(db, "projects");
+        const querySnapshot = await getDocs(missionsCollection);
+        
+        if (querySnapshot.empty) {
+          console.log("No missions found");
+          setError("No missions available");
+          return;
+        }
+
+        const missionData: Mission[] = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          console.log("Mission data:", data);  // This will help us see what fields we're getting
+          return {
+            id: doc.id,
+            aim: data.aim || "",
+            contact: data.contact || "",
+            darpanId: data.darpanId || "",
+            email: data.email || "",
+            location: data.location || "",
+            ngoName: data.ngoName || "",
+            password: data.password || "",
+            price: data.price || "",
+            projectName: data.projectName || "",
+            state: data.state || "",
+            image: data.image || null,
+          } as Mission;
+        });
+
+        console.log("Fetched missions:", missionData);
+        setMissions(missionData);
+      } catch (error) {
+        console.error("Error fetching missions:", error);
+        setError("Failed to load missions");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMissions();
+  }, []);
+
+  if (error) {
+    return (
+      <main className="min-h-screen bg-white">
+        <Header />
+        <div className="container mx-auto px-4 pt-20 pb-8">
+          <div className="text-center text-red-600">{error}</div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-white">
@@ -24,18 +99,34 @@ export default function AdoptPage() {
         {/* Mission-based Adoption */}
         <section className="mb-12">
           <h2 className="text-xl font-semibold text-green-800 mb-4">Adopt with...</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {missions.map((mission) => (
-              <button
-                key={mission}
-                className="bg-green-50 rounded-lg p-4 text-center cursor-pointer hover:shadow-lg transition-shadow duration-300 w-full"
-                onClick={() => router.push(`/adopt/${mission.toLowerCase().replace(/\s+/g, '-')}`)}
-              >
-                <div className="aspect-square bg-gray-600 rounded-lg mb-3"></div>
-                <p className="text-green-800">{mission}</p>
-              </button>
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-800 mx-auto"></div>
+              <p className="mt-2">Loading missions...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {missions.map((mission) => (
+                <button
+                  key={mission.id}
+                  className="bg-green-50 rounded-lg p-4 text-center cursor-pointer hover:shadow-lg transition-shadow duration-300 w-full"
+                  onClick={() => router.push(`/adopt/${mission.projectName.toLowerCase().replace(/\s+/g, '-')}`)}
+                >
+                  <div className="aspect-square bg-gray-600 rounded-lg mb-3">
+                    <img 
+                      src={mission.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNNtYDIdmvtpKrNnW0CcmzGXMdPxFgFuxisA&s"} 
+                      alt={mission.projectName}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                  <p className="text-green-800 font-medium">{mission.projectName}</p>
+                  <p className="text-sm text-gray-600">{mission.ngoName}</p>
+                  <p className="text-sm text-gray-600">{mission.location}, {mission.state}</p>
+                  <p className="text-sm font-medium text-green-700 mt-2">₹{mission.price}</p>
+                </button>
+              ))}
+            </div>
+          )}
           <div className="text-center mt-4">
             <button className="text-gray-500">▼</button>
           </div>
