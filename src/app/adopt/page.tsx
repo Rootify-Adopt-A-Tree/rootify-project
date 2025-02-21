@@ -1,17 +1,21 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';  // Correct import for Next.js 13+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 export default function AdoptPage() {
+  const router = useRouter();
   const [isZodiacExpanded, setIsZodiacExpanded] = React.useState(false);
 
   const allZodiacSigns = [
     'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
     'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
   ];
+
+  const missions = ['Mission Taljai', 'Mission Anandvan', 'Mission Pune'];
+
   return (
     <main className="min-h-screen bg-white">
       <Header />
@@ -21,11 +25,15 @@ export default function AdoptPage() {
         <section className="mb-12">
           <h2 className="text-xl font-semibold text-green-800 mb-4">Adopt with...</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {['Mission Taljai', 'Mission Anandvan', 'Mission Pune'].map((mission) => (
-              <div key={mission} className="bg-green-50 rounded-lg p-4 text-center">
+            {missions.map((mission) => (
+              <button
+                key={mission}
+                className="bg-green-50 rounded-lg p-4 text-center cursor-pointer hover:shadow-lg transition-shadow duration-300 w-full"
+                onClick={() => router.push(`/adopt/${mission.toLowerCase().replace(/\s+/g, '-')}`)}
+              >
                 <div className="aspect-square bg-gray-600 rounded-lg mb-3"></div>
                 <p className="text-green-800">{mission}</p>
-              </div>
+              </button>
             ))}
           </div>
           <div className="text-center mt-4">
