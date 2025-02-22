@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# anchor
+.anchor
+
+# test-ledger
+test-ledger
+
+# target
+target
+
+# **/*.rs.bk
+**/*.rs.bk

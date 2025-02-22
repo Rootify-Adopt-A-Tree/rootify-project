@@ -21,6 +21,9 @@ export default function Header() {
           <Link href="#about" className="text-gray-600 hover:text-green-700">About</Link>
           <Link href="#ngos" className="text-gray-600 hover:text-green-700">NGOs</Link>
           <Link href="#soultree" className="text-gray-600 hover:text-green-700">SoulTree</Link>
+          <Link href="/transactions" className="text-gray-600 hover:text-gray-900">
+            My Adoptions
+          </Link>
         </div>
         <div className="flex items-center space-x-2">
           <Link href="/" className="text-2xl font-bold text-green-700">Rootify</Link>

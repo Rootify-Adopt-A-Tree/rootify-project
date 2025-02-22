@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import Link from 'next/link';
 
 interface Mission {
   id: string;
@@ -22,12 +23,22 @@ interface Mission {
   image?: string;
 }
 
+interface Tree {
+  name: string;
+  price: string;
+  sci_name: string;
+  details: string;
+  n_des: string;
+  imageUrl: string;
+}
+
 export default function AdoptPage() {
   const router = useRouter();
   const [isZodiacExpanded, setIsZodiacExpanded] = React.useState(false);
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [trees, setTrees] = useState<Tree[]>([]);
 
   const allZodiacSigns = [
     'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
@@ -79,6 +90,25 @@ export default function AdoptPage() {
     fetchMissions();
   }, []);
 
+  useEffect(() => {
+    const fetchTrees = async () => {
+      try {
+        const treesRef = collection(db, "trees");
+        const snapshot = await getDocs(treesRef);
+        const treesData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Tree[];
+        setTrees(treesData);
+      } catch (error) {
+        console.error("Error fetching trees:", error);
+        setError("Failed to load trees");
+      }
+    };
+
+    fetchTrees();
+  }, []);
+
   if (error) {
     return (
       <main className="min-h-screen bg-white">
@@ -110,7 +140,7 @@ export default function AdoptPage() {
                 <button
                   key={mission.id}
                   className="bg-green-50 rounded-lg p-4 text-center cursor-pointer hover:shadow-lg transition-shadow duration-300 w-full"
-                  onClick={() => router.push(`/adopt/${mission.projectName.toLowerCase().replace(/\s+/g, '-')}`)}
+                  onClick={() => router.push(`/adopt/mission/${mission.projectName.toLowerCase().replace(/\s+/g, '-')}`)}
                 >
                   <div className="aspect-square bg-gray-600 rounded-lg mb-3">
                     <img 
@@ -132,7 +162,7 @@ export default function AdoptPage() {
           </div>
         </section>
 
-        {/* Seasonal Trees */}
+        {/* Modified Seasonal Trees section */}
         <section className="mb-12 relative">
           <h2 className="text-xl font-semibold text-green-800 mb-4">Adopt these Seasonal ones...</h2>
           <div className="relative">
@@ -153,28 +183,39 @@ export default function AdoptPage() {
               className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide scroll-smooth"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-              {[
-                { name: 'Mango', price: 'XXX', season: 'Summer' },
-                { name: 'Jammun', price: 'XXX', season: 'Monsoon' },
-                { name: 'Watermelon', price: 'XXX', season: 'Summer' },
-                { name: 'Orange', price: 'XXX', season: 'Winter' },
-                { name: 'Guava', price: 'XXX', season: 'Winter' },
-                { name: 'Banana', price: 'XXX', season: 'All Season' },
-                { name: 'Coconut', price: 'XXX', season: 'All Season' },
-                { name: 'Papaya', price: 'XXX', season: 'All Season' },
-                { name: 'Custard Apple', price: 'XXX', season: 'Winter' },
-                { name: 'Pomegranate', price: 'XXX', season: 'Winter' }
-              ].map((tree) => (
-                <div 
-                  key={tree.name} 
-                  className="flex-none w-64 bg-green-50 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-300"
-                >
-                  <div className="aspect-square bg-gray-600 rounded-lg mb-3"></div>
-                  <p className="text-green-800 font-medium">{tree.name}</p>
-                  <p className="text-gray-600 text-sm mb-1">{tree.season}</p>
-                  <p className="text-gray-600">Price: {tree.price}</p>
+              {loading ? (
+                <div className="flex-1 text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-800 mx-auto"></div>
+                  <p className="mt-2">Loading trees...</p>
                 </div>
-              ))}
+              ) : (
+                trees.map((tree) => (
+                  <div 
+                    key={tree.name}
+                    className="flex-none w-72 bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                  >
+                    <Link href={`/adopt/${tree.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                      <div className="h-48">
+                        <img
+                          src={tree.imageUrl}
+                          alt={tree.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-semibold text-lg">{tree.name}</h3>
+                            <p className="text-sm text-gray-600 italic">{tree.sci_name}</p>
+                          </div>
+                          <span className="text-green-600 font-semibold">₹{tree.price}</span>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-2 line-clamp-2">{tree.details}</p>
+                      </div>
+                    </Link>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Right scroll button */}

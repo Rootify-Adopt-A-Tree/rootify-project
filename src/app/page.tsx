@@ -4,8 +4,14 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
+import Router from 'next/navigation';
+import { useRouter } from 'next/router';
+
+
+
 
 export default function Home() {
+
   const events = [
     { name: 'Mission Taljai', date: '16/02/2025', image: '/images/taljai.png' },
     { name: 'Mission Anandvan', date: '18/02/2025', image: '/images/anandvan.png' },
@@ -43,7 +49,7 @@ export default function Home() {
             height={200} 
             className="mx-auto"
           />
-          <button className="mt-6 w-full bg-green-700 text-white py-2 rounded-md hover:bg-green-800 transition-colors">
+          <button   className="mt-6 w-full bg-green-700 text-white py-2 rounded-md hover:bg-green-800 transition-colors">
             Adopt Now
           </button>
         </div>

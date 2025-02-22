@@ -7,6 +7,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import Header from '@/components/Header';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletSelector } from '@/components/WalletSelector';
+import { useLoadRazorpay } from '@/hooks/useLoadRazorpay';
 
 interface TreeDetails {
   name: string;
@@ -30,11 +31,14 @@ export default function TreePage() {
   const [occasion, setOccasion] = useState("Birthday");
   const [story, setStory] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'solana'>('razorpay');
+  const loadRazorpay = useLoadRazorpay();
 
   useEffect(() => {
     const fetchTreeDetails = async () => {
       try {
         const treesRef = collection(db, "trees");
+        if (!params?.slug) return;
         const q = query(
           treesRef, 
           where("name", "==", params.slug.toString().split('-').map(word => 
@@ -70,6 +74,63 @@ export default function TreePage() {
 
   const handleDecrement = () => {
     setTreeCount(prev => prev > 1 ? prev - 1 : 1);
+  };
+
+  const handleRazorpayPayment = async () => {
+    try {
+      const orderData = {
+        amount: parseInt(tree!.price) * treeCount * 100, // Razorpay expects amount in paise
+        currency: "INR",
+        receipt: `tree-${Date.now()}`,
+      };
+
+      // Create order on your backend
+      const response = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData),
+      });
+      const order = await response.json();
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: "INR",
+        name: "Rootify",
+        description: `Adopt ${treeCount} ${tree!.name}`,
+        order_id: order.id,
+        handler: async (response: any) => {
+          // Verify payment on backend
+          const verification = await fetch('/api/verify-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+
+          if (verification.ok) {
+            // Record the adoption in Firebase
+            // Create transaction on Solana (we can use a program-owned wallet)
+            // Redirect to success page
+          }
+        },
+        prefill: {
+          name: treeName,
+          email: "", // You can add email field to form if needed
+        },
+        theme: {
+          color: "#22C55E",
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error('Payment failed:', error);
+    }
   };
 
   if (loading) {
@@ -199,18 +260,51 @@ export default function TreePage() {
               </div>
 
               <div className="pt-4">
-                <WalletSelector />
-                
-                {publicKey ? (
+                <div className="flex gap-4 mb-4">
+                  <button
+                    className={`flex-1 py-2 px-4 rounded ${
+                      paymentMethod === 'razorpay' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-gray-100 text-gray-700'
+                    }`}
+                    onClick={() => setPaymentMethod('razorpay')}
+                  >
+                    Pay with ₹
+                  </button>
+                  <button
+                    className={`flex-1 py-2 px-4 rounded ${
+                      paymentMethod === 'solana' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-gray-100 text-gray-700'
+                    }`}
+                    onClick={() => setPaymentMethod('solana')}
+                  >
+                    Pay with SOL
+                  </button>
+                </div>
+
+                {paymentMethod === 'solana' ? (
+                  <>
+                    <WalletSelector />
+                    {publicKey ? (
+                      <button 
+                        className="w-full bg-green-500 text-white py-2 rounded mt-4 hover:bg-green-600"
+                      >
+                        Adopt Now with SOL
+                      </button>
+                    ) : (
+                      <p className="text-center text-gray-600 mt-4">
+                        Connect wallet to adopt
+                      </p>
+                    )}
+                  </>
+                ) : (
                   <button 
+                    onClick={handleRazorpayPayment}
                     className="w-full bg-green-500 text-white py-2 rounded mt-4 hover:bg-green-600"
                   >
-                    Adopt Now
+                    Pay ₹{parseInt(tree.price) * treeCount}
                   </button>
-                ) : (
-                  <p className="text-center text-gray-600 mt-4">
-                    Connect wallet to adopt
-                  </p>
                 )}
               </div>
             </div>
