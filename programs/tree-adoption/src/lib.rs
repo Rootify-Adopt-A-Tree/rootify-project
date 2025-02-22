@@ -44,4 +44,4 @@ pub struct TreeAdoption {
     pub timestamp: i64,
     pub tree_name: String,
     pub occasion: String,
-} 
+}

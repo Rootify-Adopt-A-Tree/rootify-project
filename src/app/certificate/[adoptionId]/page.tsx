@@ -33,7 +33,7 @@ export default function Certificate() {
 
       try {
         const adoptionDoc = await getDoc(doc(db, "adoptions", adoptionId));
-        
+
         if (!adoptionDoc.exists()) {
           throw new Error("Certificate not found");
         }
@@ -61,7 +61,7 @@ export default function Certificate() {
 
   const generateCertificateImage = async () => {
     if (!certificateRef.current) return null;
-    
+
     try {
       const canvas = await html2canvas(certificateRef.current, {
         scale: 2,
@@ -79,7 +79,7 @@ export default function Certificate() {
     if (!adoptionDetails) return;
 
     const certificateImage = await generateCertificateImage();
-    
+
     const postContent = {
       title: "I've Adopted a Tree with Rootify! 🌳",
       text: `I'm excited to share that I've taken a step towards a greener future by adopting a ${adoptionDetails.treeName} through Rootify! 🌱
@@ -102,7 +102,7 @@ Date of Adoption: ${adoptionDetails.timestamp.toLocaleDateString()}
     };
 
     // LinkedIn sharing URL with formatted content
-    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?` + 
+    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?` +
       `url=${encodeURIComponent(postContent.url)}` +
       `&title=${encodeURIComponent(postContent.title)}` +
       `&summary=${encodeURIComponent(postContent.text)}`;
@@ -136,7 +136,7 @@ Date of Adoption: ${adoptionDetails.timestamp.toLocaleDateString()}
       <Header />
       <div className="max-w-[1000px] mx-auto px-4 py-8">
         {/* Certificate Container */}
-        <div 
+        <div
           ref={certificateRef}
           className="aspect-[1.414/1] bg-[#f9f7e8] rounded-lg shadow-lg p-12 print:shadow-none relative overflow-hidden"
           style={{
@@ -171,15 +171,15 @@ Date of Adoption: ${adoptionDetails.timestamp.toLocaleDateString()}
             {/* Header */}
             <div className="text-center">
               <div className="flex justify-center mb-6">
-                <Image 
-                  src="/images/logo.png" 
-                  alt="Rootify Logo" 
-                  width={100} 
+                <Image
+                  src="/images/logo.png"
+                  alt="Rootify Logo"
+                  width={100}
                   height={100}
                   className="rounded-full"
                 />
               </div>
-              <h1 className="font-serif text-6xl text-green-900 mb-2 font-bold" 
+              <h1 className="font-serif text-6xl text-green-900 mb-2 font-bold"
                 style={{ fontFamily: 'Pinyon Script, cursive' }}>
                 Certificate of Tree Adoption
               </h1>
@@ -215,10 +215,10 @@ Date of Adoption: ${adoptionDetails.timestamp.toLocaleDateString()}
               <div className="flex justify-between items-end px-12">
                 <div className="text-center">
                   <div className="mb-2">
-                    <Image 
-                      src="/images/signature.png" 
-                      alt="Authority Signature" 
-                      width={150} 
+                    <Image
+                      src="/images/signature.png"
+                      alt="Authority Signature"
+                      width={150}
                       height={60}
                       className="mx-auto"
                     />
@@ -229,9 +229,9 @@ Date of Adoption: ${adoptionDetails.timestamp.toLocaleDateString()}
 
                 <div className="text-center flex flex-col items-center">
                   <div className="w-32 h-32 relative mb-2">
-                    <Image 
-                      src="/images/seal.png" 
-                      alt="Official Seal" 
+                    <Image
+                      src="/images/seal.png"
+                      alt="Official Seal"
                       fill
                       className="object-contain"
                     />

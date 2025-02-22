@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
+import Navbar from '@/components/Header';
 import { useRouter } from 'next/navigation';
 
 
@@ -27,7 +28,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white">
       {/* Header Section */}
-      <header className="flex justify-between items-center px-6 py-4 bg-white shadow-md">
+      {/* <header className="flex justify-between items-center px-6 py-4 bg-white shadow-md">
         <div className="flex items-center space-x-4">
           <button className="text-xl">☰</button>
           <button className="text-xl">🛒</button>
@@ -39,7 +40,9 @@ export default function Home() {
             <li><Link href="/soultree">SoulTree</Link></li>
           </ul>
         </nav>
-      </header>
+      </header> */}
+      <Navbar />
+      <div className='pt-16 md:pt-20'></div>
 
       {/* Hero Section */}
       <div className="bg-gray-200 h-64 mt-4">
