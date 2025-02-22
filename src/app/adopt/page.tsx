@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Mission {
   id: string;
@@ -32,6 +33,24 @@ interface Tree {
   imageUrl: string;
 }
 
+// Mapping of zodiac signs to their corresponding trees
+const zodiacTreeMapping = {
+  'Aries': 'Neem',
+  'Taurus': 'Apple',
+  'Gemini': 'Papaya',
+  'Cancer': 'Jasmine',
+  'Leo': 'Sunflower',
+  'Virgo': 'Chamomile',
+  'Libra': 'Almond',
+  'Scorpio': 'Cactus',
+  'Sagittarius': 'Lemon',
+  'Capricorn': 'Cedar',
+  'Aquarius': 'Ashoka',
+  'Pisces': 'Peepal'
+} as const;
+
+const allZodiacSigns = Object.keys(zodiacTreeMapping);
+
 export default function AdoptPage() {
   const router = useRouter();
   const [isZodiacExpanded, setIsZodiacExpanded] = React.useState(false);
@@ -39,11 +58,6 @@ export default function AdoptPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [trees, setTrees] = useState<Tree[]>([]);
-
-  const allZodiacSigns = [
-    'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-    'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
-  ];
 
   useEffect(() => {
     const fetchMissions = async () => {
@@ -108,6 +122,13 @@ export default function AdoptPage() {
 
     fetchTrees();
   }, []);
+
+  const handleZodiacClick = (zodiac: string) => {
+    const tree = zodiacTreeMapping[zodiac as keyof typeof zodiacTreeMapping];
+    // Convert tree name to URL-friendly slug
+    const slug = tree.toLowerCase().replace(/\s+/g, '-');
+    router.push(`/adopt/${slug}`);
+  };
 
   if (error) {
     return (
@@ -236,9 +257,22 @@ export default function AdoptPage() {
           <h2 className="text-xl font-semibold text-green-800 mb-4">Adopt according to your Zodiac...</h2>
           <div className="grid grid-cols-4 gap-6">
             {(isZodiacExpanded ? allZodiacSigns : allZodiacSigns.slice(0, 4)).map((zodiac) => (
-              <div key={zodiac} className="text-center">
-                <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-2"></div>
-                <p className="text-green-800">{zodiac}</p>
+              <div 
+                key={zodiac} 
+                className="text-center cursor-pointer transform transition-transform hover:scale-105"
+                onClick={() => handleZodiacClick(zodiac)}
+              >
+                <div className="w-24 h-24 mx-auto">
+                  <Image
+                    src={`/images/zodiac/${zodiac}.jpeg`}
+                    width={96} 
+                    height={96} 
+                    alt={zodiac} 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <p className="text-green-800 font-medium mt-2">{zodiac}</p>
+                <p className="text-sm text-gray-600">{zodiacTreeMapping[zodiac as keyof typeof zodiacTreeMapping]}</p>
               </div>
             ))}
           </div>
@@ -247,7 +281,7 @@ export default function AdoptPage() {
               className="text-gray-500 hover:text-gray-700 transition-colors duration-200" 
               onClick={() => setIsZodiacExpanded(!isZodiacExpanded)}
             >
-              {isZodiacExpanded ? '▲' : '▼'}
+              {isZodiacExpanded ? '▲ Show Less' : '▼ Show More'}
             </button>
           </div>
         </section>
