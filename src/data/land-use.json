@@ -1,0 +1,16 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "barren",
+        "area": 1234
+      },
+      "geometry": {
+        // GeoJSON coordinates for barren land areas
+      }
+    }
+    // Add other land use areas...
+  ]
+} 

@@ -2,35 +2,49 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 interface AdoptionDetails {
-  treeCount: number;
+  id: string;
+  userId: string;
+  walletAddress: string;
+  userName: string;
   treeName: string;
-  occasion: string;
-  transactionSignature: string;
-  projectName: string;
+  location: string;
   timestamp: Date;
+  transactionSignature: string;
+  treeCount: number;
+  occasion: string;
+  certificateId: string;
 }
 
 export default function AdoptionSuccess() {
   const searchParams = useSearchParams();
   const [adoptionDetails, setAdoptionDetails] = useState<AdoptionDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const { user, authenticated } = usePrivy();
+  const { wallets } = useWallets();
 
   useEffect(() => {
     const fetchDetails = async () => {
       const adoptionId = searchParams.get('id');
       const signature = searchParams.get('signature');
 
-      if (adoptionId) {
+      if (adoptionId && authenticated) {
         try {
           const adoptionDoc = await getDoc(doc(db, "adoptions", adoptionId));
           if (adoptionDoc.exists()) {
+            // Get the user's connected wallet address
+            const primaryWallet = wallets[0]?.address || '';
+
             setAdoptionDetails({
-              ...adoptionDoc.data() as AdoptionDetails,
+              id: adoptionId,
+              ...adoptionDoc.data() as Omit<AdoptionDetails, 'id'>,
+              userId: user?.id || '',
+              walletAddress: primaryWallet,
               timestamp: adoptionDoc.data().timestamp.toDate(),
               transactionSignature: signature || adoptionDoc.data().transactionSignature
             });
@@ -43,8 +57,10 @@ export default function AdoptionSuccess() {
       }
     };
 
-    fetchDetails();
-  }, [searchParams]);
+    if (authenticated) {
+      fetchDetails();
+    }
+  }, [searchParams, user, authenticated, wallets]);
 
   if (loading) {
     return (
@@ -61,9 +77,21 @@ export default function AdoptionSuccess() {
           <h1 className="text-3xl font-bold text-green-600 mb-2">
             Thank You for Your Adoption!
           </h1>
+
+          
+
+
           <p className="text-gray-600">
             Your contribution will help make the world greener
           </p>
+          <div className="mt-6">
+            <Link
+              href={`/certificate/${adoptionDetails?.id}`}
+              className="inline-block bg-green-100 text-green-700 px-6 py-2 rounded-lg hover:bg-green-200 transition-colors"
+            >
+              View Your Certificate
+            </Link>
+          </div>
         </div>
 
         <div className="space-y-6">

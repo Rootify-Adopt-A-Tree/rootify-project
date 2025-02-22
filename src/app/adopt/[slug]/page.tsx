@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { db } from "@/lib/firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, serverTimestamp } from "firebase/firestore";
 import Header from '@/components/Header';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletSelector } from '@/components/WalletSelector';

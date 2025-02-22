@@ -1,0 +1,18 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Maharashtra",
+        "forestCover": 16.5,
+        "barrenLand": 12.3,
+        "agriculturalLand": 58.2
+      },
+      "geometry": {
+        // GeoJSON coordinates for Maharashtra
+      }
+    }
+    // Add other states...
+  ]
+} 
