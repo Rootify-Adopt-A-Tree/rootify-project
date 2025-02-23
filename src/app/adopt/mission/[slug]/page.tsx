@@ -29,6 +29,7 @@ interface Project {
   species?: number;
   acres?: number;
   survivalRate?: number;
+  img_url?: string;
 }
 
 const PlantAdoption = () => {
@@ -193,7 +194,7 @@ const PlantAdoption = () => {
         <div>
           <div className="bg-gray-300 w-full h-64 relative rounded-lg overflow-hidden">
             <img 
-              src={project.image || "/default-project-image.jpg"} 
+              src={project.img_url || "/default-project-image.jpg"} 
               alt={project.projectName}
               className="w-full h-full object-cover"
             />
@@ -203,7 +204,7 @@ const PlantAdoption = () => {
           <h2 className="text-2xl font-bold">{project.projectName}</h2>
           <br />
           <br />
-          <p className="text-xl font-bold">Price: {0.001} SOL</p>
+          <p className="text-xl font-bold">Price: ₹200</p>
           <br />
           <p className="text-lg text-gray-600 font-semibold">NGO: {project.ngoName}</p>
           <br />
