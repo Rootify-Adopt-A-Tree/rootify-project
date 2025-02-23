@@ -9,12 +9,13 @@ import Header from '@/components/Header';
 interface LocationData {
   name: string;
   coordinates: [number, number];
-  currentData: {
+  statistics: {
+    forestCover: number;
+    barrenLand: number;
+    agriculturalLand: number;
     temperature: number;
     rainfall: number;
     airQuality: number;
-    forestCover: number;
-    carbonLevel: number;
   };
 }
 
@@ -26,12 +27,11 @@ export default function ExplorePage() {
   const handleLocationSelect = async (location: LocationData) => {
     setSelectedLocation(location);
     setLoading(true);
-
     try {
-      const insights = await analyzeLocation(location);
-      setAiInsights(insights);
+      const analysis = await analyzeLocation(location);
+      setAiInsights(analysis);
     } catch (error) {
-      console.error("Error analyzing location:", error);
+      console.error('Error getting AI analysis:', error);
     } finally {
       setLoading(false);
     }
@@ -40,8 +40,10 @@ export default function ExplorePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-green-800 mb-8">Explore Planting Locations</h1>
+      <div className="container mx-auto px-4 py-20">
+        <h1 className="text-3xl font-bold text-green-800 mb-8">
+          Explore Planting Opportunities
+        </h1>
         
         <div className="grid md:grid-cols-3 gap-8">
           {/* Map Section */}

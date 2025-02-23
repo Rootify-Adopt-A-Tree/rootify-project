@@ -3,7 +3,8 @@ const nextConfig = {
   images: {
     domains: [
       'encrypted-tbn0.gstatic.com',
-      'firebasestorage.googleapis.com'  // Add this if you're using Firebase Storage
+      'firebasestorage.googleapis.com',
+      'tile.openstreetmap.org'
     ],
     remotePatterns: [
       {

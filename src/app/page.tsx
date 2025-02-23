@@ -12,9 +12,9 @@ export default function Home() {
   const router = useRouter();
 
   const events = [
-    { name: 'Mission Taljai', date: '16/02/2025', image: '/images/taljai.png' },
-    { name: 'Mission Anandvan', date: '18/02/2025', image: '/images/anandvan.png' },
-    { name: 'Mission Pune', date: '20/02/2025', image: '/images/pune_mission.png' }
+    { name: 'Samiksha (Pune)', description: 'I planted my tree when my son was born. Watching them grow together makes me feel like I have two children, whom I will cherish forever...', image: '/images/landing/14.png' },
+    { name: 'Purvi (Jodhpur)', description: 'Planting a tree togther with my husband on our 25th Anniversary was very special to us. Planting a cherry blossom tree symbolizes the eternal love between us... ', image: '/images/landing/15.png' },
+    { name: 'Ayush (Mumbai)', description: 'I planted a neem tree in the memory of my cute little dog Chiku. I had a neem tree in my backyard where my dog used to play around and it will always remind me of him...', image: '/images/landing/13.png' }
   ];
 
   const handleAdoptClick = () => {
@@ -178,8 +178,9 @@ export default function Home() {
       </section>
 
       {/* Upcoming Events Section */}
+
       <section className="max-w-4xl mx-auto mb-12 px-4">
-        <h2 className="text-2xl font-bold text-center text-green-700 mb-6">Upcoming Events</h2>
+        <h2 className="text-2xl font-bold text-center text-green-700 mb-6">A Tree for Every Story</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {events.map((event, index) => (
             <div key={index} className="p-4 bg-white shadow-md rounded-lg text-center">
@@ -193,7 +194,7 @@ export default function Home() {
               />
               {/* Event Name & Date */}
               <h3 className="font-bold mt-4">{event.name}</h3>
-              <p className="text-sm text-gray-600">On {event.date}</p>
+              <p className="text-sm text-gray-600"> {event.description}</p>
             </div>
           ))}
         </div>

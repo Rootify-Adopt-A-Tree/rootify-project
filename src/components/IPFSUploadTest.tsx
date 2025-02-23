@@ -28,7 +28,7 @@ export default function IPFSUploadTest() {
 
   return (
     <div className="p-4 border rounded-lg">
-      <h2 className="text-lg font-semibold mb-4">IPFS Upload Test</h2>
+      {/* <h2 className="text-lg font-semibold mb-4">IPFS Upload Test</h2> */}
       
       <input
         type="file"

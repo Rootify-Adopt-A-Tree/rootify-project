@@ -107,7 +107,7 @@ export default function Dashboard() {
         </div>
 
         <div className="mb-8">
-          <IPFSUploadTest />
+          {/* <IPFSUploadTest /> */}
         </div>
 
         {error && (

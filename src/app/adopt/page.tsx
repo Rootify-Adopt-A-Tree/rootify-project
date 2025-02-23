@@ -447,7 +447,7 @@ export default function AdoptPage() {
     return (
       <main className="min-h-screen bg-white">
         <Header />
-        <div className='pt-16 md:pt-20'></div>
+        <div className="pt-16 md:pt-20"></div>
         <div className="container mx-auto px-4 pt-20 pb-8">
           <div className="text-center text-red-600">{error}</div>
         </div>
@@ -459,6 +459,7 @@ export default function AdoptPage() {
   return (
     <main className="min-h-screen bg-white">
       <Header />
+      <div className="pt-16 md:pt-20"></div>
 
       {/* 🌱 Carousel Section */}
       <div className="relative w-full h-64 md:h-80 lg:h-96 flex items-center justify-center">

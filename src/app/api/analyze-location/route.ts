@@ -13,19 +13,21 @@ export async function POST(request: Request) {
     const prompt = `
       Analyze the following location for tree planting suitability:
       Location: ${location.name}
-      Current Environmental Data:
-      - Temperature: ${location.currentData.temperature}°C
-      - Annual Rainfall: ${location.currentData.rainfall}mm
-      - Air Quality Index: ${location.currentData.airQuality}
-      - Forest Cover: ${location.currentData.forestCover}%
-      - Carbon Level: ${location.currentData.carbonLevel} ppm
+      
+      Environmental Statistics:
+      - Forest Cover: ${location.statistics.forestCover}%
+      - Barren Land: ${location.statistics.barrenLand}%
+      - Agricultural Land: ${location.statistics.agriculturalLand}%
+      - Average Temperature: ${location.statistics.temperature}°C
+      - Annual Rainfall: ${location.statistics.rainfall}mm
+      - Air Quality Index: ${location.statistics.airQuality}
 
       Please provide a detailed analysis covering:
-      1. Soil suitability and cultivation potential based on temperature and rainfall
-      2. Urgency of tree planting in this area considering current forest cover
-      3. Impact on local carbon levels and air quality
-      4. Recommended native tree species for this location
-      5. Expected environmental benefits and timeline
+      1. Current environmental status and challenges
+      2. Tree planting potential and recommended species
+      3. Expected impact on local ecosystem
+      4. Urgency level for reforestation
+      5. Specific benefits to local community
     `;
 
     const response = await openai.chat.completions.create({
@@ -33,7 +35,7 @@ export async function POST(request: Request) {
       messages: [
         {
           role: "system",
-          content: "You are an environmental expert specializing in reforestation and climate impact analysis. Focus on providing practical, actionable insights for tree planting initiatives."
+          content: "You are an environmental expert specializing in reforestation and climate impact analysis."
         },
         {
           role: "user",
@@ -41,7 +43,7 @@ export async function POST(request: Request) {
         }
       ],
       temperature: 0.7,
-      max_tokens: 500
+      max_tokens: 1000
     });
 
     return NextResponse.json({ 

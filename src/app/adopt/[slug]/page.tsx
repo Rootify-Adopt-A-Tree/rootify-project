@@ -312,6 +312,7 @@ export default function TreePage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
+        <div className="pt-16 md:pt-20"></div>
         <div className="container mx-auto px-4 py-8">
           <div className="bg-red-50 text-red-700 p-4 rounded">
             {error || "Tree not found"}

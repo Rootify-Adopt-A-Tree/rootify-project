@@ -6,7 +6,7 @@ const MyAccount = () => {
   return (
     <>
       <Navbar />
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-16">
         <h1 className="text-3xl font-bold text-green-800 text-center mb-6">My Account</h1>
 
         {/* User Info Card */}
@@ -20,12 +20,13 @@ const MyAccount = () => {
           </div>
           {/* Badge Image */}
           <div className="absolute top-0 right-0 transform translate-x-4 -translate-y-4">
-            <Image src="/badge.png" alt="Badge" width={80} height={80} />
+            <Image src="/images/badge.png" alt="Badge" width={130} height={130} />
           </div>
         </div>
+        
 
         {/* Trees Adopted Section */}
-        <h2 className="text-2xl font-semibold text-green-800 mt-8">Trees Adopted</h2>
+        {/* <h2 className="text-2xl font-semibold text-green-800 mt-8">Trees Adopted</h2>
         {[1, 2].map((_, index) => (
           <div key={index} className="bg-green-100 p-4 rounded-lg shadow-md mt-4">
             <p><strong>Tree Name:</strong> XXXX</p>
@@ -34,7 +35,7 @@ const MyAccount = () => {
             <p><strong>Cause:</strong> XXXX</p>
             <p><strong>Certificate:</strong> XXXX</p>
           </div>
-        ))}
+        ))} */}
 
         {/* Volunteering Experience Section */}
         <h2 className="text-2xl font-semibold text-green-800 mt-8">Volunteering Experience</h2>

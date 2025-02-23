@@ -6,6 +6,8 @@ import { collection, addDoc } from "firebase/firestore";
 import Link from "next/link";
 import Image from "next/image";
 import { User, LogIn } from "lucide-react";
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from "@/lib/firebase";
 
 async function addDataToFirestore(name: string, email: string, password: string, phone: string, dob: string, city: string, occupation: string) {
   try {
@@ -26,7 +28,7 @@ async function addDataToFirestore(name: string, email: string, password: string,
   }
 }
 
-export default function RegisterUser() {
+export default function Header() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,6 +39,10 @@ export default function RegisterUser() {
   const [showLoginDropdown, setShowLoginDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user] = useAuthState(auth);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showLoginOptions, setShowLoginOptions] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,9 +59,18 @@ export default function RegisterUser() {
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      await auth.signOut();
+      setShowUserMenu(false);
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   return (
-    <>
-      <nav className="bg-[rgba(18,159,92,0.15)] shadow-sm p-4 fixed w-full top-0 z-50 font-bold">
+    <header className="fixed top-0 left-0 right-0 bg-[rgba(18,159,92,0.15)] shadow-md z-50">
+      <nav className="container mx-auto px-4 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <button 
@@ -122,12 +137,105 @@ export default function RegisterUser() {
           <div className="space-x-6">
             <Link href="/" className="text-gray-600 hover:text-green-700">Home</Link>
             <Link href="/about" className="text-gray-600 hover:text-green-700">About</Link>
+            <Link href="/why" className="text-gray-600 hover:text-green-700">Why</Link>
             <Link href="/soultree" className="text-gray-600 hover:text-green-700">SoulTree</Link>
             <Link href="/transactions" className="text-gray-600 hover:text-green-700">My Adoptions</Link>
+            <Link href="/organization/events" className="text-gray-600 hover:text-green-700">Events</Link>
+            <Link href="/explore" className="text-gray-600 hover:text-green-700">Explore</Link>
           </div>
           <div className="flex items-center space-x-2">
             <Link href="/" className="text-2xl font-bold text-green-700">Rootify</Link>
             <Image src="/images/logo/logof.png" alt="Tree Logo" width={50} height={50} />
+          </div>
+
+          {/* User menu */}
+          <div className="flex items-center space-x-4">
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-2 text-gray-600 hover:text-green-700"
+                >
+                  <span className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
+                    {user.email?.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="hidden md:inline">{user.email}</span>
+                </button>
+
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={handleSignOut}
+                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={() => setShowLoginOptions(!showLoginOptions)}
+                  className="text-green-600 hover:text-green-700"
+                >
+                  Sign In
+                </button>
+
+                {showLoginOptions && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
+                    <Link
+                      href="/user/login"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      User Login
+                    </Link>
+                    <Link
+                      href="/user/signup"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Sign Up
+                    </Link>
+                    <Link
+                      href="/organization/login"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Organization Login
+                    </Link>
+                    <Link
+                      href="/ngo/register"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Register as NGO
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
           </div>
         </div>
       </nav>
@@ -151,6 +259,26 @@ export default function RegisterUser() {
           </div>
         </div>
       )}
-    </>
+
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-gray-200 py-2">
+          <div className="flex flex-col space-y-2">
+            <Link href="/soultree" className="block py-2 text-gray-600 hover:text-green-700">
+              SoulTree
+            </Link>
+            <Link href="/transactions" className="block py-2 text-gray-600 hover:text-green-700">
+              My Adoptions
+            </Link>
+            <Link href="/organization/events" className="block py-2 text-gray-600 hover:text-green-700">
+              Events
+            </Link>
+            <Link href="/explore" className="block py-2 text-gray-600 hover:text-green-700">
+              Explore
+            </Link>
+          </div>
+        </div>
+      )}
+    </header>
   );
 }

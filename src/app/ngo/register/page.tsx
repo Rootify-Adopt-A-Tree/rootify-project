@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { db } from "@/lib/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import Header from '@/components/Header';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 interface NGOFormData {
   name: string;
@@ -59,6 +61,7 @@ export default function NGORegistration() {
   });
 
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [error, setError] = useState('');
 
   const handleTreeTypeChange = (type: string) => {
     if (type === "Other") {
@@ -86,33 +89,49 @@ export default function NGORegistration() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!acceptedTerms) {
-      alert("Please accept the terms and conditions");
-      return;
-    }
-
-    // Include other tree type in the submission if specified
-    const finalTreeTypes = formData.preferredTrees.includes("Other") && otherTreeType
-      ? [...formData.preferredTrees.filter(t => t !== "Other"), otherTreeType]
-      : formData.preferredTrees;
+    if (!acceptedTerms) return;
 
     setLoading(true);
     try {
-      const docRef = await addDoc(collection(db, "ngos"), {
-        ...formData,
-        preferredTrees: finalTreeTypes,
-        status: 'pending',
-        createdAt: new Date(),
-        verificationStatus: 'pending',
-        treesPlanted: 0,
-        activeProjects: 0,
-        rating: 0
+      // Create Firebase Auth account
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      // Store NGO data in Firestore
+      const ngoRef = await addDoc(collection(db, "ngos"), {
+        name: formData.name,
+        email: formData.email,
+        contactNo: formData.contactNo,
+        city: formData.city,
+        state: formData.state,
+        darpanId: formData.darpanId,
+        description: formData.description,
+        treePlantingExperience: formData.treePlantingExperience,
+        plantingCapacity: formData.plantingCapacity,
+        preferredTrees: formData.preferredTrees,
+        userId: userCredential.user.uid,
+        createdAt: serverTimestamp(),
+        status: 'pending' // for admin approval if needed
       });
 
-      router.push(`/ngo/success?id=${docRef.id}`);
-    } catch (error) {
-      console.error("Error registering NGO:", error);
-      alert("Error registering NGO. Please try again.");
+      // Also create a user record with role
+      await addDoc(collection(db, "users"), {
+        uid: userCredential.user.uid,
+        email: formData.email,
+        name: formData.name,
+        role: 'ngo',
+        ngoId: ngoRef.id,
+        createdAt: serverTimestamp()
+      });
+
+      // Redirect to success page
+      router.push(`/ngo/success?id=${ngoRef.id}`);
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      setError(error.message || "Failed to register");
     } finally {
       setLoading(false);
     }

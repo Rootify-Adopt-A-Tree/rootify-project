@@ -1,12 +1,13 @@
 interface LocationData {
   name: string;
   coordinates: [number, number];
-  currentData: {
+  statistics: {
+    forestCover: number;
+    barrenLand: number;
+    agriculturalLand: number;
     temperature: number;
     rainfall: number;
     airQuality: number;
-    forestCover: number;
-    carbonLevel: number;
   };
 }
 

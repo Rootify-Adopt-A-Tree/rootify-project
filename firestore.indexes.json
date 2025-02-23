@@ -1,0 +1,12 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "eventPosts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "eventId", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    }
+  ]
+}
