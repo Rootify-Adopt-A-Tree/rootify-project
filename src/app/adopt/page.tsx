@@ -309,6 +309,11 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';  // Correct import for Next.js 13+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import Link from 'next/link';
@@ -364,6 +369,7 @@ export default function AdoptPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [trees, setTrees] = useState<Tree[]>([]);
+
 
   useEffect(() => {
     const fetchMissions = async () => {
@@ -453,6 +459,28 @@ export default function AdoptPage() {
   return (
     <main className="min-h-screen bg-white">
       <Header />
+
+      {/* 🌱 Carousel Section */}
+      <div className="relative w-full h-64 md:h-80 lg:h-96 flex items-center justify-center">
+            <Swiper
+              spaceBetween={0}
+              slidesPerView={1}
+              loop={true}
+              autoplay={{ delay: 3000, disableOnInteraction: false }}
+              pagination={{ clickable: true }}
+              navigation={true}
+              modules={[Autoplay, Pagination, Navigation]}
+              className="w-full h-full"
+            >
+              {["Children", "Earth", "Father", "Mother"].map((img, index) => (
+                <SwiperSlide key={index}>
+                  <div className="relative w-full h-full">
+                    <Image src={`/images/car/${img}.png`} layout="fill" objectFit="contain" alt={`Slide ${index + 1}`} />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
       
       <div className="container mx-auto px-4 pt-20 pb-8">
         {/* Mission-based Adoption */}

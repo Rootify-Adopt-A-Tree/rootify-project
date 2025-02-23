@@ -79,25 +79,25 @@ export default function RaisePage() {
 
       {/* 🌱 Carousel Section */}
       <div className="relative w-full h-64 md:h-80 lg:h-96 flex items-center justify-center">
-        <Swiper
-          spaceBetween={0}
-          slidesPerView={1}
-          loop={true}
-          autoplay={{ delay: 3000, disableOnInteraction: false }}
-          pagination={{ clickable: true }} // ✅ Added Pagination
-          navigation={true} // ✅ Added Navigation
-          modules={[Autoplay, Pagination, Navigation]} // ✅ Include all necessary modules
-          className="w-full h-full"
-        >
-          {["Children", "Earth", "Father", "Mother"].map((img, index) => (
-            <SwiperSlide key={index}>
-              <div className="relative w-full h-full">
-                <Image src={`/images/car/${img}.png`} layout="fill" objectFit="cover" alt={`Slide ${index + 1}`} />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
+                  <Swiper
+                    spaceBetween={0}
+                    slidesPerView={1}
+                    loop={true}
+                    autoplay={{ delay: 3000, disableOnInteraction: false }}
+                    pagination={{ clickable: true }}
+                    navigation={true}
+                    modules={[Autoplay, Pagination, Navigation]}
+                    className="w-full h-full"
+                  >
+                    {["Children", "Earth", "Father", "Mother"].map((img, index) => (
+                      <SwiperSlide key={index}>
+                        <div className="relative w-full h-full">
+                          <Image src={`/images/car/${img}.png`} layout="fill" objectFit="contain" alt={`Slide ${index + 1}`} />
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
       
       {/* 🌱 Plant Adoption Section */}
       <div className="max-w-6xl mx-auto py-8 px-4">

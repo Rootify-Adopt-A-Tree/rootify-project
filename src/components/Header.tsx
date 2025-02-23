@@ -55,7 +55,7 @@ export default function RegisterUser() {
 
   return (
     <>
-      <nav className="bg-white shadow-sm p-4 fixed w-full top-0 z-50">
+      <nav className="bg-[rgba(18,159,92,0.15)] shadow-sm p-4 fixed w-full top-0 z-50 font-bold">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <button 

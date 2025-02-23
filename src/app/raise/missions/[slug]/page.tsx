@@ -3,8 +3,11 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 import Navbar from "@/components/Header";
 import Footer from "@/components/Footer";
 import { db } from "@/lib/firebase";
@@ -114,25 +117,26 @@ const MissionPage = () => {
       <div className="pt-16 md:pt-20"></div>
 
       {/* Hero Section with Carousel */}
-      <section className="w-full h-64 bg-gray-400">
-        <Carousel
-          showThumbs={false}
-          autoPlay
-          infiniteLoop
-          showStatus={false}
-          className="h-full"
-        >
-          <div className="h-64 flex items-center justify-center bg-gray-500 text-white text-lg">
-            Slide 1
-          </div>
-          <div className="h-64 flex items-center justify-center bg-gray-600 text-white text-lg">
-            Slide 2
-          </div>
-          <div className="h-64 flex items-center justify-center bg-gray-700 text-white text-lg">
-            Slide 3
-          </div>
-        </Carousel>
-      </section>
+      <div className="relative w-full h-64 md:h-80 lg:h-96 flex items-center justify-center">
+                  <Swiper
+                    spaceBetween={0}
+                    slidesPerView={1}
+                    loop={true}
+                    autoplay={{ delay: 3000, disableOnInteraction: false }}
+                    pagination={{ clickable: true }}
+                    navigation={true}
+                    modules={[Autoplay, Pagination, Navigation]}
+                    className="w-full h-full"
+                  >
+                    {["Children", "Earth", "Father", "Mother"].map((img, index) => (
+                      <SwiperSlide key={index}>
+                        <div className="relative w-full h-full">
+                          <Image src={`/images/car/${img}.png`} layout="fill" objectFit="contain" alt={`Slide ${index + 1}`} />
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
 
       {/* Statistics Section */}
       <section className="flex justify-center gap-8 bg-white py-6">
@@ -142,8 +146,8 @@ const MissionPage = () => {
           { value: projects[0]?.surrate || "0%", label: "survived" },
           { value: projects[0]?.species || "0", label: "different species" }
         ].map((stat, index) => (
-          <div key={index} className="text-center">
-            <Image src={`/icons/stat-${index + 1}.png`} width={40} height={40} alt={stat.label} />
+          <div key={index} className="text-center flex items-center justify-center gap-2px">
+            <Image src={`/images/treelogo.png`} width={40} height={40} alt={stat.label} />
             <p className="text-lg font-bold text-green-800">{stat.value}</p>
             <p className="text-gray-600 text-sm">{stat.label}</p>
           </div>
